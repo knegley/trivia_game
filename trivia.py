@@ -91,7 +91,6 @@ def update_score(file, score, callback):
             players.append(body)
             new_list = sorted(
                 players, key=lambda x: x.split()[1], reverse=True)[:10]
-            # new_list.pop()
 
             content = "\n".join([header, *new_list])
 
