@@ -134,7 +134,7 @@ def main() -> int:
                 score += 20
             else:
                 score += 30
-
+        print(f"\nAnswer is {item['answer']}")
         print(f'\nYour score is {score}')
         i += 1
     return score
