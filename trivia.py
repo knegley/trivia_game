@@ -58,6 +58,7 @@ def update_score(file, score, callback):
     with open(file, "a+") as f, open(file) as x:
         scores = x.read().splitlines()
         players = scores[3:]
+
         player_scores = (p.split()[1] for p in players)
 
         for top_score in player_scores:
@@ -66,7 +67,7 @@ def update_score(file, score, callback):
 
                 break
 
-        if not scores or len(players) <= 10:
+        if not scores:
             print("\nYou have a top score!\n")
             name = input("Enter Initials\n")
 
@@ -77,23 +78,27 @@ def update_score(file, score, callback):
 
             f.write(body)
 
-        # elif len(players >= 10) and is_top_score:
-        #     print("\nYou have a top score!\n")
-        #     name = input("Enter Initials\n")
-        #     if not name:
-        #         return callback(score)
+        elif is_top_score:
+            print("\nYou have a top score!\n")
+            name = input("Enter Initials\n")
+            if not name:
+                return callback(score)
 
-        #     header = f"{'Top Scores'.center(35)}\n{'-'*38}\nPlayer{'Score':>15}{'Date':>15}"
-        #     body = f"{name}{score:>15}{date_formatted:>20}"
-        #     new_list = sorted(players, key=lambda x: x.split()[0])
-        #     print(new_list)
-        #     new_list.pop()
-        #     updated_list = new_list.append(body)
-        #     print(updated_list)
-        #     content = "\n".join([header, updated_list])
-        #     x.writelines(content)
-        # else:
-        #     print("You didn't get a top score")
+            print(
+                len(sorted(players, key=lambda x: x.split()[1], reverse=True)))
+            header = f"{'Top Scores'.center(35)}\n{'-'*38}\nPlayer{'Score':>15}{'Date':>15}"
+            body = f"{name}{score:>15}{date_formatted:>20}"
+            players.append(body)
+            new_list = sorted(
+                players, key=lambda x: x.split()[1], reverse=True)[:10]
+            # new_list.pop()
+
+            content = "\n".join([header, *new_list])
+
+            with open(file, "w")as f:
+                f.write(content)
+        else:
+            print("You didn't get a top score")
 
 
 def top_score(score: int) -> str:
@@ -105,7 +110,7 @@ def top_score(score: int) -> str:
     try:
         with open(top_scores, "x") as file:
             file.write(header)
-        update_score(top_scores, score)
+        update_score(top_scores, score, top_score)
     except FileExistsError:
         update_score(top_scores, score, top_score)
 
